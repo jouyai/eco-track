@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EcoTrack - Pelacak Dampak Lingkungan
 
-## Getting Started
+EcoTrack adalah aplikasi web yang membantu pengguna memahami dan mengurangi jejak karbon mereka. Aplikasi ini memungkinkan pengguna untuk mencatat aktivitas harian (transportasi, energi, gaya hidup), melihat dampak lingkungan mereka secara real-time, dan berpartisipasi dalam komunitas untuk masa depan yang lebih hijau.
 
-First, run the development server:
+![EcoTrack Icon](./app/icon.svg)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Fitur Utama
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Pelacakan Aktivitas**: Catat aktivitas harian seperti perjalanan kendaraan, penggunaan listrik, dan daur ulang.
+- **Dashboard Interaktif**: Visualisasikan dampak lingkungan Anda dengan grafik dan statistik real-time.
+- **Analisis Dampak**: Lihat estimasi jejak karbon (CO2e) dari setiap aktivitas.
+- **Gamifikasi**: Dapatkan poin untuk aktivitas ramah lingkungan dan pantau peringkat Anda di papan peringkat komunitas.
+- **Riwayat Aktivitas**: Kelola dan tinjau riwayat aktivitas Anda.
+- **Desain Responsif**: Antarmuka pengguna yang modern dan ramah seluler.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Teknologi yang Digunakan
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Bahasa**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [SQLite](https://www.sqlite.org/) (via Prisma ORM)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) & [Lucide React](https://lucide.dev/)
+- **Visualisasi Data**: [Recharts](https://recharts.org/)
+- **Autentikasi**: [NextAuth.js](https://next-auth.js.org/)
+- **Form Handling**: React Hook Form & Zod
 
-## Learn More
+## Cara Menjalankan Project
 
-To learn more about Next.js, take a look at the following resources:
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi ini di komputer lokal Anda:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prasyarat
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js (versi 18 atau lebih baru)
+- npm, yarn, pnpm, atau bun
 
-## Deploy on Vercel
+### Instalasi
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1.  **Clone repositori ini:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    ```bash
+    git clone https://github.com/jouyai/eco-track.git
+    cd eco-track
+    ```
+
+2.  **Instal dependensi:**
+
+    ```bash
+    npm install
+    # atau
+    yarn install
+    # atau
+    pnpm install
+    ```
+
+3.  **Setup Database:**
+
+    Aplikasi ini menggunakan Prisma dengan SQLite. Jalankan migrasi untuk membuat database lokal:
+
+    ```bash
+    npx prisma migrate dev
+    ```
+
+4.  **Jalankan server pengembangan:**
+
+    ```bash
+    npm run dev
+    # atau
+    yarn dev
+    # atau
+    pnpm dev
+    ```
+
+5.  **Buka aplikasi:**
+
+    Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
+
+## Struktur Folder
+
+- `app/`: Halaman dan layout aplikasi (App Router).
+- `components/`: Komponen UI yang dapat digunakan kembali.
+- `lib/`: Utilitas, konfigurasi, dan server actions.
+- `prisma/`: Skema database dan migrasi.
+- `public/`: Aset statis.
+
+## Lisensi
+
+[MIT](LICENSE)

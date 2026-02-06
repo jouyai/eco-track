@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  
+  activities    Activity[]
+  goals         Goal[]
+  badges        UserBadge[]
+  challenges    UserChallenge[]
+  points        Int       @default(0)
+}
+
+model Account {
+  id                 String  @id @default(uuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Activity {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   // e.g., "transport", "energy", "lifestyle"
+  name            String   // e.g., "car", "vegan_meal"
+  value           Float    // The amount (e.g., distance in km, kwh)
+  unit            String   // e.g., "km", "kwh", "kg"
+  carbonFootprint Float    // Calculated CO2e in kg
+  passengers      Int?     @default(1) // Number of passengers for transport
+  date            DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Goal {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String   // e.g., "reduce_transport"
+  targetValue  Float
+  currentValue Float    @default(0)
+  startDate    DateTime
+  endDate      DateTime
+  isCompleted  Boolean  @default(false)
+}
+
+model Badge {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String
+  imageUrl    String?
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model Challenge {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  type        String   // e.g., "transport", "lifestyle"
+  target      Float    // Target value to reach
+  unit        String   // e.g., "action", "km", "kg"
+  duration    Int      // Duration in days
+  reward      String   // e.g., "100 Poin"
+  difficulty  String   // "Easy", "Medium", "Hard"
+  createdAt   DateTime @default(now())
+  
+  userChallenges UserChallenge[]
+}
+
+model UserChallenge {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  progress    Float     @default(0)
+  status      String    @default("ACTIVE") // ACTIVE, COMPLETED, FAILED
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  lastUpdated DateTime?
+  
+  @@unique([userId, challengeId])
+}
