@@ -30,7 +30,7 @@ interface Activity {
   unit: string;
   carbonFootprint: number;
   passengers?: number | null;
-  date: Date;
+  date: string | Date;
 }
 
 interface ActivityHistoryProps {

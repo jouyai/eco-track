@@ -1,13 +1,46 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Leaf, TrendingDown, Users, Trophy } from "lucide-react";
-import { getStatsPageData } from "@/lib/actions/activity";
+import { Leaf, Users, Trophy } from "lucide-react";
 import { ImpactChart } from "@/components/dashboard/ImpactChart";
 
-export default async function StatsPage() {
-  const stats = await getStatsPageData();
-  
+interface Category {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
+export default function StatsPage() {
+  const { data: session } = useSession();
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetch("/api/dashboard/detailed-stats")
+        .then((res) => {
+          if (res.ok) return res.json();
+          return null;
+        })
+        .then((data) => {
+          setStats(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [session]);
+
+  if (loading && session?.user) {
+    return <div className="p-6 text-center text-muted-foreground">Memuat statistik...</div>;
+  }
+
   const weeklyData = stats?.weeklyData || [];
-  const categories = stats?.categories || [];
+  const categories: Category[] = stats?.categories || [];
 
   return (
     <div className="flex flex-col gap-6">

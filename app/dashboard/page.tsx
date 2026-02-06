@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { OverviewStats } from "@/components/dashboard/OverviewStats";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { ImpactChart } from "@/components/dashboard/ImpactChart";
@@ -5,12 +9,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { auth } from "@/auth";
-import { getDashboardStats } from "@/lib/actions/activity";
 
-export default async function DashboardPage() {
-  const session = await auth();
-  const stats = await getDashboardStats();
+export default function DashboardPage() {
+  const { data: session } = useSession();
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetch("/api/dashboard/stats")
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Failed to fetch stats");
+        })
+        .then((data) => {
+          setStats(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [session]);
+
+  if (loading && session?.user) {
+    return <div className="flex items-center justify-center h-full p-6 text-muted-foreground">Memuat data dashboard...</div>;
+  }
 
   return (
     <div className="flex flex-col gap-6">

@@ -1,12 +1,14 @@
-import { auth } from "@/auth";
+"use client";
+
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogOut, Trash2, User } from "lucide-react";
+import { LogOut, Trash2 } from "lucide-react";
 
-export default async function SettingsPage() {
-  const session = await auth();
+export default function SettingsPage() {
+  const { data: session } = useSession();
   const user = session?.user;
 
   return (

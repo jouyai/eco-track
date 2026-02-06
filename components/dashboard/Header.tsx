@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "next-auth";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Bell, Car, Zap, Leaf, Bus, Bike, Train } from "lucide-react";
 import {
@@ -14,6 +14,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface Activity {
   id: string;
@@ -23,15 +24,28 @@ interface Activity {
   unit: string;
   carbonFootprint: number;
   passengers?: number | null;
-  date: Date;
+  date: string | Date;
 }
 
-interface HeaderProps {
-  user?: User;
-  notifications?: Activity[];
-}
+export function Header() {
+  const { data: session } = useSession();
+  const [notifications, setNotifications] = useState<Activity[]>([]);
 
-export function Header({ user, notifications = [] }: HeaderProps) {
+  useEffect(() => {
+    if (session?.user) {
+      fetch("/api/activities/recent")
+        .then((res) => {
+          if (res.ok) return res.json();
+          return [];
+        })
+        .then((data) => {
+          if (Array.isArray(data)) {
+             setNotifications(data);
+          }
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [session]);
 
   const getIcon = (type: string, name: string) => {
     const lowerName = name.toLowerCase();
@@ -106,11 +120,11 @@ export function Header({ user, notifications = [] }: HeaderProps) {
         
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
-            {user?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "U"}
+            {session?.user?.name?.[0]?.toUpperCase() || session?.user?.email?.[0]?.toUpperCase() || "U"}
           </div>
           <div className="hidden md:block">
-            <p className="text-sm font-medium">{user?.name || "User"}</p>
-            <p className="text-xs text-muted-foreground">{user?.email}</p>
+            <p className="text-sm font-medium">{session?.user?.name || "User"}</p>
+            <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
           </div>
         </div>
       </div>
