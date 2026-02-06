@@ -3,7 +3,12 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
-import { Building2, ShieldCheck, Zap, Globe, BarChart3, Users } from "lucide-react";
+import Building2 from "lucide-react/dist/esm/icons/building-2";
+import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import Users from "lucide-react/dist/esm/icons/users";
 import Link from "next/link";
 
 export default function EnterprisePage() {

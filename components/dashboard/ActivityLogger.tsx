@@ -5,7 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Car, Zap, Leaf, Bus, Bike, Train, Recycle, Lightbulb } from "lucide-react";
+import Car from "lucide-react/dist/esm/icons/car";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Bus from "lucide-react/dist/esm/icons/bus";
+import Bike from "lucide-react/dist/esm/icons/bike";
+import Train from "lucide-react/dist/esm/icons/train";
+import Recycle from "lucide-react/dist/esm/icons/recycle";
+import Lightbulb from "lucide-react/dist/esm/icons/lightbulb";
 import { toast } from "sonner";
 
 export function ActivityLogger() {

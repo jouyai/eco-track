@@ -2,7 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Bell, Car, Zap, Leaf, Bus, Bike, Train } from "lucide-react";
+import Bell from "lucide-react/dist/esm/icons/bell";
+import Car from "lucide-react/dist/esm/icons/car";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Bus from "lucide-react/dist/esm/icons/bus";
+import Bike from "lucide-react/dist/esm/icons/bike";
+import Train from "lucide-react/dist/esm/icons/train";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -4,7 +4,10 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, ArrowRight, Briefcase } from "lucide-react";
+import MapPin from "lucide-react/dist/esm/icons/map-pin";
+import Clock from "lucide-react/dist/esm/icons/clock";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
+import Briefcase from "lucide-react/dist/esm/icons/briefcase";
 import Link from "next/link";
 
 const positions = [

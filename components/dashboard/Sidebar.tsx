@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Leaf, 
-  Trophy, 
-  BarChart3, 
-  Settings, 
-  LogOut,
-  PlusCircle
-} from "lucide-react";
+import LayoutDashboard from "lucide-react/dist/esm/icons/layout-dashboard";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import Settings from "lucide-react/dist/esm/icons/settings";
+import LogOut from "lucide-react/dist/esm/icons/log-out";
+import PlusCircle from "lucide-react/dist/esm/icons/plus-circle";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 

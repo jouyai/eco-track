@@ -4,11 +4,16 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { OverviewStats } from "@/components/dashboard/OverviewStats";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { ImpactChart } from "@/components/dashboard/ImpactChart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ImpactChart = dynamic(
+  () => import("@/components/dashboard/ImpactChart").then((mod) => mod.ImpactChart),
+  { ssr: false, loading: () => <div className="h-[300px] w-full animate-pulse bg-muted/20 rounded-lg" /> }
+);
 
 export default function DashboardPage() {
   const { data: session } = useSession();

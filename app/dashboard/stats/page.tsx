@@ -3,8 +3,15 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Leaf, Users, Trophy } from "lucide-react";
-import { ImpactChart } from "@/components/dashboard/ImpactChart";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Users from "lucide-react/dist/esm/icons/users";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
+import dynamic from "next/dynamic";
+
+const ImpactChart = dynamic(
+  () => import("@/components/dashboard/ImpactChart").then((mod) => mod.ImpactChart),
+  { ssr: false, loading: () => <div className="h-[300px] w-full animate-pulse bg-muted/20 rounded-lg" /> }
+);
 
 interface Category {
   name: string;

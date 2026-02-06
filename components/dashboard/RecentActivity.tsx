@@ -1,6 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bus, Recycle, Lightbulb, Car, Bike, Train, Leaf, Zap } from "lucide-react";
+import Bus from "lucide-react/dist/esm/icons/bus";
+import Recycle from "lucide-react/dist/esm/icons/recycle";
+import Lightbulb from "lucide-react/dist/esm/icons/lightbulb";
+import Car from "lucide-react/dist/esm/icons/car";
+import Bike from "lucide-react/dist/esm/icons/bike";
+import Train from "lucide-react/dist/esm/icons/train";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Zap from "lucide-react/dist/esm/icons/zap";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
 

@@ -3,7 +3,8 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Clock } from "lucide-react";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
+import Clock from "lucide-react/dist/esm/icons/clock";
 import { useTransition } from "react";
 import { toast } from "sonner";
 

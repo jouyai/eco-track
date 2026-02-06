@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { Leaf, Twitter, Instagram, Linkedin, Github, Send } from "lucide-react";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Twitter from "lucide-react/dist/esm/icons/twitter";
+import Instagram from "lucide-react/dist/esm/icons/instagram";
+import Linkedin from "lucide-react/dist/esm/icons/linkedin";
+import Github from "lucide-react/dist/esm/icons/github";
+import Send from "lucide-react/dist/esm/icons/send";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 

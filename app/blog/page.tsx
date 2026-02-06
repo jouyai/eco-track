@@ -3,7 +3,9 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, ArrowRight } from "lucide-react";
+import Calendar from "lucide-react/dist/esm/icons/calendar";
+import User from "lucide-react/dist/esm/icons/user";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
 import Link from "next/link";
 import Image from "next/image";
 

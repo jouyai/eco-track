@@ -1,6 +1,12 @@
 "use client";
 
-import { BarChart3, Leaf, ShieldCheck, Zap, Globe, Users, Trophy } from "lucide-react";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import Users from "lucide-react/dist/esm/icons/users";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";

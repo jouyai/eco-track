@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Leaf, Trophy, Zap, TrendingUp } from "lucide-react";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 
 interface OverviewStatsProps {
   totalSavings: number;

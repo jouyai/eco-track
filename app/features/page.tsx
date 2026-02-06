@@ -4,7 +4,16 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, Leaf, ShieldCheck, Zap, Globe, Users, Trophy, ArrowRight, Smartphone, Share2 } from "lucide-react";
+import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
+import Leaf from "lucide-react/dist/esm/icons/leaf";
+import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
+import Zap from "lucide-react/dist/esm/icons/zap";
+import Globe from "lucide-react/dist/esm/icons/globe";
+import Users from "lucide-react/dist/esm/icons/users";
+import Trophy from "lucide-react/dist/esm/icons/trophy";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
+import Smartphone from "lucide-react/dist/esm/icons/smartphone";
+import Share2 from "lucide-react/dist/esm/icons/share-2";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
