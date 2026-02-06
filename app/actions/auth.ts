@@ -7,6 +7,8 @@ import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 
+export const runtime = 'edge';
+
 export async function loginWithSocial(provider: "github" | "google") {
   await signIn(provider, { redirectTo: "/dashboard" });
 }
