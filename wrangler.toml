@@ -1,0 +1,9 @@
+name = "eco-track"
+pages_build_output_dir = ".vercel/output/static"
+compatibility_date = "2024-02-06"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "eco-track-db"
+database_id = "cb74f1d8-d57f-4fce-ba1d-35a570a5ab7a"
