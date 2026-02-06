@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static"
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
+    "deploy": "wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
