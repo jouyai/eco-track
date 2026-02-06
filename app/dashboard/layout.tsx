@@ -4,6 +4,9 @@ import { Header } from "@/components/dashboard/Header";
 import { redirect } from "next/navigation";
 import { getRecentActivities } from "@/lib/actions/activity";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({
   children,
 }: {
