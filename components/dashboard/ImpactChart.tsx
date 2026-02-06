@@ -49,7 +49,7 @@ export function ImpactChart({ data }: ImpactChartProps) {
             }}
             labelStyle={{ color: 'hsl(var(--muted-foreground))', marginBottom: '4px', fontSize: '12px' }}
             itemStyle={{ fontSize: '14px', fontWeight: 500 }}
-            formatter={(value: number | undefined) => [`${value ?? 0} kg CO2e`, 'Emisi']}
+            formatter={(value: any) => [`${value ?? 0} kg CO2e`, 'Emisi']}
         />
         <Bar 
             dataKey="emissions" 
