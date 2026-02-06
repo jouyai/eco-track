@@ -34,7 +34,6 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Produk</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link href="/features" className="hover:text-primary transition-colors">Fitur</Link></li>
-              <li><Link href="/pricing" className="hover:text-primary transition-colors">Harga</Link></li>
               <li><Link href="/enterprise" className="hover:text-primary transition-colors">Enterprise</Link></li>
               <li><Link href="/changelog" className="hover:text-primary transition-colors">Changelog</Link></li>
             </ul>

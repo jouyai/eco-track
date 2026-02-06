@@ -14,7 +14,6 @@ const navItems = [
     title: "Produk",
     items: [
       { title: "Fitur", href: "/features", icon: BarChart3, desc: "Lacak emisi dengan presisi" },
-      { title: "Harga", href: "/pricing", icon: Globe, desc: "Paket untuk semua kebutuhan" },
       { title: "Enterprise", href: "/enterprise", icon: Building2, desc: "Solusi untuk korporasi" },
       { title: "Changelog", href: "/changelog", icon: FileText, desc: "Update terbaru sistem" },
     ]

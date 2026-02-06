@@ -2,8 +2,6 @@
 
 EcoTrack adalah aplikasi web yang membantu pengguna memahami dan mengurangi jejak karbon mereka. Aplikasi ini memungkinkan pengguna untuk mencatat aktivitas harian (transportasi, energi, gaya hidup), melihat dampak lingkungan mereka secara real-time, dan berpartisipasi dalam komunitas untuk masa depan yang lebih hijau.
 
-![EcoTrack Icon](./app/icon.svg)
-
 ## Fitur Utama
 
 - **Pelacakan Aktivitas**: Catat aktivitas harian seperti perjalanan kendaraan, penggunaan listrik, dan daur ulang.
