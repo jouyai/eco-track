@@ -21,6 +21,24 @@ const makePrisma = () => {
   // jadi kita harus memastikan ini tidak dipanggil saat runtime di Cloudflare jika DB tidak ada.
   // Namun, saat build time next build, ini mungkin dipanggil.
   
+  // Jika kita sedang di environment Edge (tapi bukan Cloudflare yang valid), jangan return PrismaClient standar.
+  // Return undefined atau throw error yang bisa ditangkap.
+  // Namun, untuk build process Next.js, kita perlu instance dummy jika DB tidak tersedia.
+  
+  if (process.env.NEXT_RUNTIME === 'edge') {
+    // Di Edge Runtime tanpa Adapter, PrismaClient akan error.
+    // Kita return object kosong yang diproxy agar tidak crash saat import, 
+    // tapi akan error jika method dipanggil (yang seharusnya tidak terjadi di build time karena dynamic usage).
+    return new Proxy({} as PrismaClient, {
+      get: (target, prop) => {
+        if (prop === 'then') return undefined; // Biar tidak dianggap Promise
+        return () => {
+           throw new Error("Prisma Client cannot be used in Edge Runtime without D1 Adapter.");
+        }
+      }
+    });
+  }
+
   return new PrismaClient({
     log: ["query"],
   });
