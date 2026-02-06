@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { challenges, userChallenges } from "@/lib/db/schema";
+import { eq, and, notInArray, count } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const runtime = 'edge';
@@ -67,41 +69,40 @@ export async function GET() {
     const userId = session.user.id;
 
     // 1. Check if challenges exist, if not seed them
-    const count = await prisma.challenge.count();
-    if (count === 0) {
-      await prisma.challenge.createMany({
-        data: INITIAL_CHALLENGES
-      });
+    const [countResult] = await db.select({ count: count() }).from(challenges);
+    if (countResult.count === 0) {
+      await db.insert(challenges).values(INITIAL_CHALLENGES);
     }
 
     // 2. Get User's Active Challenges
-    const activeChallenges = await prisma.userChallenge.findMany({
-      where: {
-        userId: userId,
-        status: "ACTIVE"
-      },
-      include: {
+    const activeChallenges = await db.query.userChallenges.findMany({
+      where: and(
+        eq(userChallenges.userId, userId),
+        eq(userChallenges.status, "ACTIVE")
+      ),
+      with: {
         challenge: true
       }
     });
 
     // 3. Get Available Challenges (exclude active ones)
     const activeChallengeIds = activeChallenges.map(uc => uc.challengeId);
-    const availableChallenges = await prisma.challenge.findMany({
-      where: {
-        id: {
-          notIn: activeChallengeIds.length > 0 ? activeChallengeIds : [""]
-        }
-      }
-    });
+    
+    let availableChallenges;
+    if (activeChallengeIds.length > 0) {
+        availableChallenges = await db.query.challenges.findMany({
+            where: notInArray(challenges.id, activeChallengeIds)
+        });
+    } else {
+        availableChallenges = await db.query.challenges.findMany();
+    }
 
     return NextResponse.json({
       active: activeChallenges,
       available: availableChallenges
     });
-
   } catch (error) {
-    console.error("Error fetching challenges:", error);
+    console.error(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

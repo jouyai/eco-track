@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { userChallenges } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const runtime = 'edge';
@@ -18,27 +20,23 @@ export async function POST(req: Request) {
     }
 
     // Check if already joined
-    const existing = await prisma.userChallenge.findUnique({
-      where: {
-        userId_challengeId: {
-          userId: session.user.id,
-          challengeId,
-        },
-      },
+    const existing = await db.query.userChallenges.findFirst({
+      where: and(
+        eq(userChallenges.userId, session.user.id),
+        eq(userChallenges.challengeId, challengeId)
+      )
     });
 
     if (existing) {
         return NextResponse.json({ error: "Already joined" }, { status: 400 });
     }
 
-    await prisma.userChallenge.create({
-      data: {
+    await db.insert(userChallenges).values({
         userId: session.user.id,
         challengeId,
         progress: 0,
         status: "ACTIVE",
         startDate: new Date(),
-      },
     });
 
     return NextResponse.json({ success: true });

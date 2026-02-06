@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { userChallenges } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const runtime = 'edge';
@@ -17,14 +19,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Challenge ID required" }, { status: 400 });
     }
 
-    const userChallenge = await prisma.userChallenge.findUnique({
-      where: {
-        userId_challengeId: {
-          userId: session.user.id,
-          challengeId,
-        },
-      },
-      include: {
+    const userChallenge = await db.query.userChallenges.findFirst({
+      where: and(
+        eq(userChallenges.userId, session.user.id),
+        eq(userChallenges.challengeId, challengeId)
+      ),
+      with: {
         challenge: true,
       },
     });
@@ -33,8 +33,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Challenge not found" }, { status: 404 });
     }
 
-    const newProgress = userChallenge.progress + 1;
-    let status = userChallenge.status;
+    const newProgress = (userChallenge.progress || 0) + 1;
+    let status = userChallenge.status || "ACTIVE";
     let completed = false;
 
     if (newProgress >= userChallenge.challenge.target) {
@@ -44,14 +44,13 @@ export async function POST(req: Request) {
       // (Simplified: assuming points logic exists here or we just mark complete)
     }
 
-    await prisma.userChallenge.update({
-      where: { id: userChallenge.id },
-      data: {
+    await db.update(userChallenges)
+      .set({
         progress: newProgress,
         status: status,
         lastUpdated: new Date(),
-      },
-    });
+      })
+      .where(eq(userChallenges.id, userChallenge.id));
 
     return NextResponse.json({ success: true, completed });
   } catch (error) {

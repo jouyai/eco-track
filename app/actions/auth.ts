@@ -1,7 +1,9 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { loginSchema, signupSchema } from "@/lib/validations/auth";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
@@ -21,20 +23,18 @@ export async function registerUser(values: z.infer<typeof signupSchema>) {
   const { email, password, name } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
 
   if (existingUser) {
     return { error: "Email sudah digunakan!" };
   }
 
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
+  await db.insert(users).values({
+    name,
+    email,
+    password: hashedPassword,
   });
 
   return { success: "Akun berhasil dibuat!" };

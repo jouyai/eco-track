@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { activities, users } from "@/lib/db/schema";
+import { eq, and, gte, desc, gt, count } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const runtime = 'edge';
@@ -15,23 +17,21 @@ export async function GET() {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const activities = await prisma.activity.findMany({
-      where: {
-        userId: userId,
-        date: {
-          gte: startOfMonth,
-        },
-      },
+    const activitiesData = await db.query.activities.findMany({
+      where: and(
+        eq(activities.userId, userId),
+        gte(activities.date, startOfMonth)
+      ),
     });
 
     let totalEmissions = 0;
-    activities.forEach(a => {
+    activitiesData.forEach(a => {
         if (a.carbonFootprint > 0) totalEmissions += a.carbonFootprint;
     });
 
     // Category Breakdown
     const categoryMap = new Map<string, number>();
-    activities.forEach(a => {
+    activitiesData.forEach(a => {
         if (a.carbonFootprint > 0) {
           const current = categoryMap.get(a.type) || 0;
           categoryMap.set(a.type, current + a.carbonFootprint);
@@ -49,11 +49,11 @@ export async function GET() {
     startOfWeek.setDate(now.getDate() - 6);
     startOfWeek.setHours(0,0,0,0);
     
-    const weeklyActivities = await prisma.activity.findMany({
-        where: {
-            userId: userId,
-            date: { gte: startOfWeek }
-        }
+    const weeklyActivities = await db.query.activities.findMany({
+        where: and(
+            eq(activities.userId, userId),
+            gte(activities.date, startOfWeek)
+        )
     });
     
     const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
@@ -75,18 +75,13 @@ export async function GET() {
     }
 
     // User Points & Rank
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { points: true }
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        columns: { points: true }
     });
 
-    const leaderboardRank = await prisma.user.count({
-        where: {
-            points: {
-                gt: user?.points || 0
-            }
-        }
-    }) + 1;
+    const [rankResult] = await db.select({ count: count() }).from(users).where(gt(users.points, user?.points || 0));
+    const leaderboardRank = rankResult.count + 1;
 
     return NextResponse.json({
       totalEmissions: Math.round(totalEmissions * 10) / 10,

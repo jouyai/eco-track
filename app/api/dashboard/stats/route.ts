@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { activities, users, userChallenges } from "@/lib/db/schema";
+import { and, eq, gte, desc, count, gt } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const runtime = 'edge';
@@ -16,22 +18,18 @@ export async function GET() {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // 1. Fetch activities for this month
-    const activities = await prisma.activity.findMany({
-      where: {
-        userId: userId,
-        date: {
-          gte: startOfMonth,
-        },
-      },
-      orderBy: {
-        date: 'desc',
-      },
+    const activitiesData = await db.query.activities.findMany({
+      where: and(
+        eq(activities.userId, userId),
+        gte(activities.date, startOfMonth)
+      ),
+      orderBy: [desc(activities.date)],
     });
 
     let totalEmissions = 0;
     let totalSavings = 0;
     
-    activities.forEach(act => {
+    activitiesData.forEach(act => {
       if (act.carbonFootprint > 0) {
         totalEmissions += act.carbonFootprint;
       } else {
@@ -40,23 +38,19 @@ export async function GET() {
     });
 
     // 2. Activity Count (Month)
-    const activityCount = activities.length;
+    const activityCount = activitiesData.length;
 
     // 3. Streak Logic
     // Fetch dates for last 365 days for streak calculation
-    const pastActivities = await prisma.activity.findMany({
-      where: {
-        userId: userId,
-        date: {
-          gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
-        },
-      },
-      select: {
+    const pastActivities = await db.query.activities.findMany({
+      where: and(
+        eq(activities.userId, userId),
+        gte(activities.date, new Date(Date.now() - 365 * 24 * 60 * 60 * 1000))
+      ),
+      columns: {
         date: true,
       },
-      orderBy: {
-        date: 'desc',
-      },
+      orderBy: [desc(activities.date)],
     });
 
     const uniqueDates = Array.from(new Set(pastActivities.map(a => new Date(a.date).toISOString().split('T')[0]))).sort().reverse();
@@ -94,26 +88,24 @@ export async function GET() {
     }
 
     // 4. Recent Activities (from this month, matching original logic)
-    const recentActivities = activities.slice(0, 5);
+    const recentActivities = activitiesData.slice(0, 5);
 
     // 5. User Points
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { points: true }
+    const userData = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: { points: true }
     });
 
     // 6. Active Challenge
-    const activeChallenge = await prisma.userChallenge.findFirst({
-        where: {
-            userId: userId,
-            status: "ACTIVE"
-        },
-        include: {
+    const activeChallenge = await db.query.userChallenges.findFirst({
+        where: and(
+            eq(userChallenges.userId, userId),
+            eq(userChallenges.status, "ACTIVE")
+        ),
+        with: {
             challenge: true
         },
-        orderBy: {
-            lastUpdated: 'desc'
-        }
+        orderBy: [desc(userChallenges.lastUpdated)]
     });
 
     // 7. Daily Tip
@@ -130,13 +122,11 @@ export async function GET() {
     const dailyTip = TIPS[dayOfYear % TIPS.length];
 
     // 8. Leaderboard Rank
-    const leaderboardRank = await prisma.user.count({
-        where: {
-            points: {
-                gt: user?.points || 0
-            }
-        }
-    }) + 1;
+    const [rankResult] = await db.select({ count: count() })
+      .from(users)
+      .where(gt(users.points, userData?.points || 0));
+
+    const leaderboardRank = rankResult.count + 1;
 
     // 9. Weekly Data (Last 7 days)
     const startOfWeek = new Date(now);
@@ -147,11 +137,11 @@ export async function GET() {
     // Actually, startOfMonth might be later than startOfWeek if today is 1st-6th of month.
     // So we should query safely.
     
-    const weeklyActivities = await prisma.activity.findMany({
-        where: {
-            userId: userId,
-            date: { gte: startOfWeek }
-        }
+    const weeklyActivities = await db.query.activities.findMany({
+        where: and(
+            eq(activities.userId, userId),
+            gte(activities.date, startOfWeek)
+        )
     });
     
     const days = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
@@ -178,7 +168,7 @@ export async function GET() {
       activityCount,
       streak,
       recentActivities,
-      points: user?.points || 0,
+      points: userData?.points || 0,
       activeChallenge,
       dailyTip,
       leaderboardRank,

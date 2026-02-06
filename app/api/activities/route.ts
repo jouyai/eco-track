@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { activities } from "@/lib/db/schema";
+import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -28,13 +30,13 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const activities = await prisma.activity.findMany({
-      where: { userId: session.user.id },
-      orderBy: { date: 'desc' },
-      take: 50, // Limit history
+    const data = await db.query.activities.findMany({
+      where: eq(activities.userId, session.user.id),
+      orderBy: [desc(activities.date)],
+      limit: 50,
     });
 
-    return NextResponse.json(activities);
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -61,8 +63,7 @@ export async function POST(req: Request) {
       carbonFootprint = carbonFootprint / passengers;
     }
 
-    const activity = await prisma.activity.create({
-      data: {
+    const [activity] = await db.insert(activities).values({
         userId: session.user.id,
         type,
         name: subType,
@@ -71,8 +72,7 @@ export async function POST(req: Request) {
         carbonFootprint,
         passengers,
         date: new Date(),
-      },
-    });
+    }).returning();
 
     return NextResponse.json({ success: true, activity });
   } catch (error) {
@@ -95,18 +95,8 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
         }
 
-        const activity = await prisma.activity.findUnique({
-            where: { id },
-        });
-
-        if (!activity || activity.userId !== session.user.id) {
-            return NextResponse.json({ error: "Unauthorized or not found" }, { status: 403 });
-        }
-
-        await prisma.activity.delete({
-            where: { id },
-        });
-
+        await db.delete(activities).where(eq(activities.id, id));
+        
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
