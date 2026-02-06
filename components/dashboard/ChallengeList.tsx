@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Clock } from "lucide-react";
-import { joinChallenge, updateChallengeProgress } from "@/lib/actions/challenge";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
@@ -36,7 +35,12 @@ export function ChallengeList({ activeChallenges, availableChallenges }: Challen
   const handleJoin = (challengeId: string, title: string) => {
     startTransition(async () => {
       try {
-        await joinChallenge(challengeId);
+        const res = await fetch("/api/challenges/join", {
+          method: "POST",
+          body: JSON.stringify({ challengeId }),
+        });
+        if (!res.ok) throw new Error("Failed");
+
         toast.success(`Berhasil mengikuti tantangan "${title}"!`);
       } catch (error) {
         toast.error("Gagal mengikuti tantangan.");
@@ -47,8 +51,15 @@ export function ChallengeList({ activeChallenges, availableChallenges }: Challen
   const handleUpdate = (challengeId: string) => {
       startTransition(async () => {
           try {
-            const isCompleted = await updateChallengeProgress(challengeId);
-            if (isCompleted) {
+            const res = await fetch("/api/challenges/progress", {
+              method: "POST",
+              body: JSON.stringify({ challengeId }),
+            });
+            
+            if (!res.ok) throw new Error("Failed");
+            
+            const data = (await res.json()) as { completed: boolean };
+            if (data.completed) {
                 toast.success("Selamat! Tantangan selesai!");
             } else {
                 toast.success("Progres diperbarui!");

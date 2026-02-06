@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, Car, Bike, Train, Bus, Zap, Leaf } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { deleteActivity } from "@/lib/actions/activity";
 import { toast } from "sonner";
 
 import {
@@ -43,7 +42,11 @@ export function ActivityHistory({ activities }: ActivityHistoryProps) {
   const handleDelete = (activityId: string) => {
     startTransition(async () => {
       try {
-        await deleteActivity(activityId);
+        const res = await fetch(`/api/activities?id=${activityId}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Failed");
+        
         toast.success("Aktivitas berhasil dihapus");
       } catch (error) {
         toast.error("Gagal menghapus aktivitas");

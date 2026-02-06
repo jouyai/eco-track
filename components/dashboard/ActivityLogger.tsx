@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Car, Zap, Leaf, Bus, Bike, Train, Recycle, Lightbulb } from "lucide-react";
-import { logActivity } from "@/lib/actions/activity";
 import { toast } from "sonner";
 
 export function ActivityLogger() {
@@ -21,11 +20,13 @@ export function ActivityLogger() {
     
     startTransition(async () => {
         try {
-            await logActivity(formData);
+            const res = await fetch("/api/activities", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) throw new Error("Failed");
+            
             toast.success("Transportasi berhasil dicatat!");
-            // Reset form manually or reload page? Revalidation handles data, but form reset is good.
-            // HTML form reset happens if we don't preventDefault, but action replaces submit.
-            // Simple way: get form element and reset.
             const form = document.getElementById("transport-form") as HTMLFormElement;
             if (form) form.reset();
         } catch (error) {
@@ -36,15 +37,18 @@ export function ActivityLogger() {
 
   const handleEnergySubmit = (formData: FormData) => {
     formData.append("type", "energy");
-    // subType is in the select
-    // unit needs to be derived or passed
     const subType = formData.get("subType") as string;
     const unit = subType === "electricity" ? "kWh" : (subType === "gas" ? "m3" : "kg");
     formData.append("unit", unit);
 
     startTransition(async () => {
         try {
-            await logActivity(formData);
+            const res = await fetch("/api/activities", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) throw new Error("Failed");
+
             toast.success("Energi berhasil dicatat!");
             const form = document.getElementById("energy-form") as HTMLFormElement;
             if (form) form.reset();
@@ -63,7 +67,12 @@ export function ActivityLogger() {
 
       startTransition(async () => {
           try {
-            await logActivity(formData);
+            const res = await fetch("/api/activities", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) throw new Error("Failed");
+
             toast.success(`Aksi "${actionLabel}" berhasil dicatat!`);
           } catch (error) {
             toast.error("Gagal mencatat aktivitas.");
