@@ -148,9 +148,11 @@ export async function updateChallengeProgress(challengeId: string) {
     const session = await auth();
     if (!session?.user?.id) throw new Error("Unauthorized");
 
+    const userId = session.user.id;
+
     const userChallenge = await prisma.userChallenge.findFirst({
         where: {
-            userId: session.user.id,
+            userId: userId,
             challengeId: challengeId,
             status: "ACTIVE"
         },
@@ -202,7 +204,7 @@ export async function updateChallengeProgress(challengeId: string) {
 
             if (points > 0) {
                 await tx.user.update({
-                    where: { id: session.user.id },
+                    where: { id: userId },
                     data: {
                         points: {
                             increment: points
